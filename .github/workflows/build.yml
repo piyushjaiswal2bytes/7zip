@@ -44,14 +44,18 @@ jobs:
       working-directory: CPP\7zip\UI\Explorer
       run: nmake PLATFORM=x64
 
+    - name: Collect Binaries
+      run: |
+        mkdir OutputBinaries
+        copy CPP\7zip\Bundles\Alone2\x64\7zz.exe OutputBinaries\
+        copy CPP\7zip\Bundles\Alone\x64\7za.exe OutputBinaries\
+        copy CPP\7zip\Bundles\Format7zF\x64\7z.dll OutputBinaries\
+        copy CPP\7zip\UI\Console\x64\7z.exe OutputBinaries\
+        copy CPP\7zip\UI\FileManager\x64\7zFM.exe OutputBinaries\
+        copy CPP\7zip\UI\Explorer\x64\7-zip.dll OutputBinaries\
+
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: 7-Zip-Binaries
-        path: |
-          CPP\7zip\Bundles\Alone2\x64\7zz.exe
-          CPP\7zip\Bundles\Alone\x64\7za.exe
-          CPP\7zip\Bundles\Format7zF\x64\7z.dll
-          CPP\7zip\UI\Console\x64\7z.exe
-          CPP\7zip\UI\FileManager\x64\7zFM.exe
-          CPP\7zip\UI\Explorer\x64\7-zip.dll
+        path: OutputBinaries\*
