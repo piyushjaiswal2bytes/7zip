@@ -1,0 +1,57 @@
+name: Build 7-Zip
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+
+    - name: Build 7zz.exe (Full Standalone Console)
+      working-directory: CPP\7zip\Bundles\Alone2
+      run: nmake PLATFORM=x64
+
+    - name: Build 7za.exe (Standalone Console)
+      working-directory: CPP\7zip\Bundles\Alone
+      run: nmake PLATFORM=x64
+
+    - name: Build 7z.dll (Core Library)
+      working-directory: CPP\7zip\Bundles\Format7zF
+      run: nmake PLATFORM=x64
+
+    - name: Build 7z.exe (Console)
+      working-directory: CPP\7zip\UI\Console
+      run: nmake PLATFORM=x64
+
+    - name: Build 7zFM.exe (File Manager GUI)
+      working-directory: CPP\7zip\UI\FileManager
+      run: nmake PLATFORM=x64
+
+    - name: Build 7-zip.dll (Explorer Context Menu)
+      working-directory: CPP\7zip\UI\Explorer
+      run: nmake PLATFORM=x64
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: 7-Zip-Binaries
+        path: |
+          CPP\7zip\Bundles\Alone2\x64\7zz.exe
+          CPP\7zip\Bundles\Alone\x64\7za.exe
+          CPP\7zip\Bundles\Format7zF\x64\7z.dll
+          CPP\7zip\UI\Console\x64\7z.exe
+          CPP\7zip\UI\FileManager\x64\7zFM.exe
+          CPP\7zip\UI\Explorer\x64\7-zip.dll
